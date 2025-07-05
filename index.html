@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz de Matemática</title>
+  <style>
+    body {
+      background-color: #2c003e; /* roxo escuro */
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background-color: #4b0082;
+      padding: 20px 30px;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+    .answers {
+      list-style-type: none;
+      padding: 0;
+    }
+    .answers li {
+      background-color: #5e00a3;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .answers li:hover {
+      background-color: #7a00cc;
+    }
+    .answers li.correct {
+      background-color: #28a745;
+    }
+    .answers li.wrong {
+      background-color: #dc3545;
+    }
+    .next-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #8000ff;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      display: none;
+    }
+    .next-btn:hover {
+      background-color: #9900ff;
+    }
+    .score {
+      font-size: 1.4em;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Quiz de Matemática</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <ul class="answers" id="answers"></ul>
+      <button class="next-btn" id="next-btn">Próxima</button>
+    </div>
+    <div class="score" id="score"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "Quanto é 7 + 5?",
+        answers: [
+          { text: "12", correct: true },
+          { text: "10", correct: false },
+          { text: "11", correct: false },
+          { text: "13", correct: false },
+        ],
+      },
+      {
+        question: "Qual é o resultado de 9 x 3?",
+        answers: [
+          { text: "27", correct: true },
+          { text: "18", correct: false },
+          { text: "36", correct: false },
+          { text: "21", correct: false },
+        ],
+      },
+      {
+        question: "Quanto é 15 - 6?",
+        answers: [
+          { text: "9", correct: true },
+          { text: "10", correct: false },
+          { text: "8", correct: false },
+          { text: "7", correct: false },
+        ],
+      },
+      {
+        question: "Se João tem 20 reais e gasta 8, com quanto ele fica?",
+        answers: [
+          { text: "12", correct: true },
+          { text: "10", correct: false },
+          { text: "8", correct: false },
+          { text: "14", correct: false },
+        ],
+      },
+      {
+        question: "Quanto é 6 dividido por 2?",
+        answers: [
+          { text: "3", correct: true },
+          { text: "4", correct: false },
+          { text: "2", correct: false },
+          { text: "1", correct: false },
+        ],
+      },
+    ];
+
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const nextBtn = document.getElementById("next-btn");
+    const scoreEl = document.getElementById("score");
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    function loadQuestion() {
+      answered = false;
+      nextBtn.style.display = "none";
+      scoreEl.innerHTML = "";
+      const currentQuiz = quizData[currentQuestion];
+      questionEl.textContent = currentQuiz.question;
+      answersEl.innerHTML = "";
+      currentQuiz.answers.forEach((answer, index) => {
+        const li = document.createElement("li");
+        li.textContent = answer.text;
+        li.addEventListener("click", () => selectAnswer(li, answer.correct));
+        answersEl.appendChild(li);
+      });
+    }
+
+    function selectAnswer(selectedLi, correct) {
+      if (answered) return;
+      answered = true;
+
+      if (correct) {
+        selectedLi.classList.add("correct");
+        score++;
+      } else {
+        selectedLi.classList.add("wrong");
+      }
+
+      // Mostrar todas as corretas
+      Array.from(answersEl.children).forEach((li, index) => {
+        if (quizData[currentQuestion].answers[index].correct) {
+          li.classList.add("correct");
+        }
+      });
+
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    });
+
+    function showScore() {
+      questionEl.style.display = "none";
+      answersEl.style.display = "none";
+      nextBtn.style.display = "none";
+      scoreEl.textContent = `Você acertou ${score} de ${quizData.length} perguntas! 🎉`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
